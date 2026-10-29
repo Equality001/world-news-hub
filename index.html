@@ -50,18 +50,18 @@
             max-width: 600px;
             margin: 15px auto;
         }
-        select, input, .btn {
+        select, .btn {
             padding: 8px 12px;
             background-color: #21262d;
             color: #ffffff;
             border: 1px solid var(--border-color);
             border-radius: 6px;
             font-size: 13px;
+            cursor: pointer;
         }
         .btn {
             background-color: #238636;
             font-weight: bold;
-            cursor: pointer;
         }
         .btn:hover { background-color: #2ea043; }
         .news-container {
@@ -116,7 +116,7 @@
     <div class="header">
         <h1 id="site-title">⚔️ World News Hub</h1>
         <p id="site-subtitle">Global Military & Geopolitical News Source</p>
-        <div class="status-bar" id="last-update-time">Last Sync: Not Updated</div>
+        <div class="status-bar" id="last-update-time">Status: Online & Ready</div>
     </div>
 
     <div class="controls">
@@ -124,4 +124,100 @@
             <option value="my">🇲🇲 မြန်မာ (Myanmar)</option>
             <option value="en">🇬🇧 English</option>
             <option value="thi">🇹🇭 ไทย (Thai)</option>
-        
+        </select>
+        <button class="btn" onclick="loadNews()">🔄 Refresh News</button>
+    </div>
+
+    <div class="news-container" id="news-list">
+        <p style="text-align: center; color: var(--meta-color);">Loading news...</p>
+    </div>
+
+    <script>
+        const NEWS_DATA = [
+            {
+                id: "mah_001",
+                title_my: "အထူးသတင်း: မင်းအောင်လှိုင်နှင့် စစ်ကောင်စီ၏ စစ်ရေးနှင့် နိုင်ငံရေး နောက်ဆုံးဆောင်ရွက်ချက်များ",
+                title_en: "Top Priority: Senior General Min Aung Hlaing & Military Council Developments",
+                title_thi: "ข่าวสำคัญ: มิน อ่อง หล่าย และสถานการณ์การเมืองเมียนมาล่าสุด",
+                desc_my: "မြန်မာနိုင်ငံအတွင်း စစ်ရေးတင်းမာမှုများ၊ ဒေသတွင်း သံတမန်ရေးရာနှင့် အစိုးရအဖွဲ့၏ လုပ်ဆောင်ချက်များကို စောင့်ကြည့်တင်ဆက်ထားခြင်း။",
+                desc_en: "Tracking regional military conflicts, diplomatic meetings, and official administration announcements.",
+                desc_thi: "ติดตามรายงานสถานการณ์ความขัดแย้งทางการเมืองและการทหารในเมียนมา",
+                url: "https://www.mizzima.com",
+                source: "Mizzima / Priority Verification",
+                verification: "Verified Source",
+                date: "2026",
+                isPriority: true
+            },
+            {
+                id: "news_002",
+                title_my: "ကမ္ဘာ့စစ်ရေးနှင့် နိုင်ငံတကာ ပဋိပက္ခများ သုံးသပ်ချက်",
+                title_en: "Global Military & International Conflict Analysis",
+                title_thi: "วิเคราะห์สถานการณ์ความขัดแย้งทางทหารและระดับโลก",
+                desc_my: "နိုင်ငံတကာ လုံခြုံရေး၊ စစ်ရေးမဟာဗျူဟာများနှင့် ဒေသတွင်း တင်းမာမှု အခြေအနေများ။",
+                desc_en: "Overview of international security, military strategies, and geopolitical tensions worldwide.",
+                desc_thi: "ภาพรวมความมั่นคงระหว่างประเทศและยุทธศาสตร์ทางทหาร",
+                url: "https://www.reuters.com",
+                source: "Reuters / Global News",
+                verification: "International Media",
+                date: "2026",
+                isPriority: false
+            },
+            {
+                id: "news_003",
+                title_my: "အာဆီယံဒေသတွင်း နိုင်ငံရေးနှင့် လုံခြုံရေး အခြေအနေများ",
+                title_en: "ASEAN Regional Politics & Security Updates",
+                title_thi: "อัปเดตการเมืองและความมั่นคงในภูมิภาคอาเซียน",
+                desc_my: "အာဆီယံ အဖွဲ့ဝင်နိုင်ငံများ၏ သံတမန်ရေးရာ ဆက်ဆံရေးနှင့် ပဋိပက္ခ ငြိမ်းချမ်းရေး ဆွေးနွေးမှုများ။",
+                desc_en: "Diplomatic relations and peace negotiation updates among ASEAN member states.",
+                desc_thi: "ความสัมพันธ์ทางการทูตและการเจรจาสันติภาพในภูมิภาคอาเซียน",
+                url: "https://www.channelnewsasia.com",
+                source: "CNA News",
+                verification: "Regional Source",
+                date: "2026",
+                isPriority: false
+            }
+        ];
+
+        function loadNews() {
+            const lang = document.getElementById('lang-select').value;
+            const container = document.getElementById('news-list');
+            const title = document.getElementById('site-title');
+            const subtitle = document.getElementById('site-subtitle');
+
+            if (lang === 'my') {
+                title.innerText = "⚔️ World News Hub (မြန်မာ)";
+                subtitle.innerText = "မင်းအောင်လှိုင် နှင့် ကမ္ဘာ့စစ်ရေးသတင်းများ";
+            } else if (lang === 'en') {
+                title.innerText = "⚔️ World News Hub (English)";
+                subtitle.innerText = "Min Aung Hlaing Updates & Global Military News";
+            } else if (lang === 'thi') {
+                title.innerText = "⚔️ World News Hub (ไทย)";
+                subtitle.innerText = "ข่าวสารทหารโลกและสถานการณ์เมียนมา";
+            }
+
+            const articles = NEWS_DATA.map(item => ({
+                title: lang === 'thi' ? item.title_thi : (lang === 'en' ? item.title_en : item.title_my),
+                description: lang === 'thi' ? item.desc_thi : (lang === 'en' ? item.desc_en : item.desc_my),
+                url: item.url,
+                source: item.source,
+                verification: item.verification,
+                date: item.date,
+                isPriority: item.isPriority
+            }));
+
+            container.innerHTML = articles.map(art => `
+                <div class="news-card ${art.isPriority ? 'priority-card' : ''}">
+                    <a href="${art.url}" target="_blank" class="news-title">${art.isPriority ? '🔥 ' : ''}${art.title}</a>
+                    <div class="news-desc">${art.description}</div>
+                    <div class="news-meta">
+                        <span>📡 ${art.source} <span class="verification-tag">${art.verification}</span></span>
+                        <span>📅 ${art.date}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        loadNews();
+    </script>
+</body>
+</html>
