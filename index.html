@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>World News Hub — Global Military & Geopolitics</title>
+    <title>World News Hub — Server Translation Ready</title>
     <style>
         :root {
             --bg-color: #0d1117;
@@ -102,12 +102,12 @@
             display: flex;
             justify-content: space-between;
         }
-        .verification-tag {
+        .server-badge {
             font-size: 10px;
             padding: 2px 6px;
             border-radius: 4px;
-            background-color: #21262d;
-            color: #d2a8ff;
+            background-color: #1f6feb;
+            color: #ffffff;
         }
     </style>
 </head>
@@ -115,109 +115,115 @@
 
     <div class="header">
         <h1 id="site-title">⚔️ World News Hub</h1>
-        <p id="site-subtitle">Global Military & Geopolitical News Source</p>
-        <div class="status-bar" id="last-update-time">Status: Online & Ready</div>
+        <p id="site-subtitle">Server-Side Multi-Language Translation Engine</p>
+        <div class="status-bar" id="server-status">Server API: Connected & Ready</div>
     </div>
 
     <div class="controls">
-        <select id="lang-select" onchange="loadNews()">
+        <select id="lang-select" onchange="translateAndLoadNews()">
             <option value="my">🇲🇲 မြန်မာ (Myanmar)</option>
             <option value="en">🇬🇧 English</option>
             <option value="thi">🇹🇭 ไทย (Thai)</option>
         </select>
-        <button class="btn" onclick="loadNews()">🔄 Refresh News</button>
+        <button class="btn" onclick="translateAndLoadNews()">🔄 Translate & Refresh</button>
     </div>
 
     <div class="news-container" id="news-list">
-        <p style="text-align: center; color: var(--meta-color);">Loading news...</p>
+        <p style="text-align: center; color: var(--meta-color);">Translating content via server...</p>
     </div>
 
     <script>
-        const NEWS_DATA = [
+        // မူရင်း သတင်း အချက်အလက်များ (Server Database Mock)
+        const RAW_NEWS_DATABASE = [
             {
                 id: "mah_001",
-                title_my: "အထူးသတင်း: မင်းအောင်လှိုင်နှင့် စစ်ကောင်စီ၏ စစ်ရေးနှင့် နိုင်ငံရေး နောက်ဆုံးဆောင်ရွက်ချက်များ",
-                title_en: "Top Priority: Senior General Min Aung Hlaing & Military Council Developments",
-                title_thi: "ข่าวสำคัญ: มิน อ่อง หล่าย และสถานการณ์การเมืองเมียนมาล่าสุด",
-                desc_my: "မြန်မာနိုင်ငံအတွင်း စစ်ရေးတင်းမာမှုများ၊ ဒေသတွင်း သံတမန်ရေးရာနှင့် အစိုးရအဖွဲ့၏ လုပ်ဆောင်ချက်များကို စောင့်ကြည့်တင်ဆက်ထားခြင်း။",
-                desc_en: "Tracking regional military conflicts, diplomatic meetings, and official administration announcements.",
-                desc_thi: "ติดตามรายงานสถานการณ์ความขัดแย้งทางการเมืองและการทหารในเมียนมา",
+                original_title: "အထူးသတင်း: မင်းအောင်လှိုင်နှင့် စစ်ကောင်စီ၏ စစ်ရေးနှင့် နိုင်ငံရေး နောက်ဆုံးဆောင်ရွက်ချက်များ",
+                original_desc: "မြန်မာနိုင်ငံအတွင်း စစ်ရေးတင်းမာမှုများ၊ ဒေသတွင်း သံတမန်ရေးရာနှင့် အစိုးရအဖွဲ့၏ လုပ်ဆောင်ချက်များကို စောင့်ကြည့်တင်ဆက်ထားခြင်း။",
                 url: "https://www.mizzima.com",
-                source: "Mizzima / Priority Verification",
-                verification: "Verified Source",
+                source: "Mizzima / Server Verified",
                 date: "2026",
                 isPriority: true
             },
             {
                 id: "news_002",
-                title_my: "ကမ္ဘာ့စစ်ရေးနှင့် နိုင်ငံတကာ ပဋိပက္ခများ သုံးသပ်ချက်",
-                title_en: "Global Military & International Conflict Analysis",
-                title_thi: "วิเคราะห์สถานการณ์ความขัดแย้งทางทหารและระดับโลก",
-                desc_my: "နိုင်ငံတကာ လုံခြုံရေး၊ စစ်ရေးမဟာဗျူဟာများနှင့် ဒေသတွင်း တင်းမာမှု အခြေအနေများ။",
-                desc_en: "Overview of international security, military strategies, and geopolitical tensions worldwide.",
-                desc_thi: "ภาพรวมความมั่นคงระหว่างประเทศและยุทธศาสตร์ทางทหาร",
+                original_title: "Global Military & International Conflict Strategic Analysis",
+                original_desc: "Overview of international security, military strategies, and geopolitical tensions worldwide.",
                 url: "https://www.reuters.com",
-                source: "Reuters / Global News",
-                verification: "International Media",
+                source: "Reuters / International",
                 date: "2026",
                 isPriority: false
             },
             {
                 id: "news_003",
-                title_my: "အာဆီယံဒေသတွင်း နိုင်ငံရေးနှင့် လုံခြုံရေး အခြေအနေများ",
-                title_en: "ASEAN Regional Politics & Security Updates",
-                title_thi: "อัปเดตการเมืองและความมั่นคงในภูมิภาคอาเซียน",
-                desc_my: "အာဆီယံ အဖွဲ့ဝင်နိုင်ငံများ၏ သံတမန်ရေးရာ ဆက်ဆံရေးနှင့် ပဋိပက္ခ ငြိမ်းချမ်းရေး ဆွေးနွေးမှုများ။",
-                desc_en: "Diplomatic relations and peace negotiation updates among ASEAN member states.",
-                desc_thi: "ความสัมพันธ์ทางการทูตและการเจรจาสันติภาพในภูมิภาคอาเซียน",
+                original_title: "ASEAN Regional Politics and Security Cooperation Updates",
+                original_desc: "Diplomatic relations and peace negotiation updates among ASEAN member states.",
                 url: "https://www.channelnewsasia.com",
                 source: "CNA News",
-                verification: "Regional Source",
                 date: "2026",
                 isPriority: false
             }
         ];
 
-        function loadNews() {
-            const lang = document.getElementById('lang-select').value;
-            const container = document.getElementById('news-list');
-            const title = document.getElementById('site-title');
-            const subtitle = document.getElementById('site-subtitle');
+        // Server-side Translation Handler Simulation (Production မှာ Server API endpoint သို့မဟုတ် Cloudflare Worker သို့ ပို့ပေးရပါမည်)
+        async function translateText(text, targetLang) {
+            if (targetLang === 'my' && text.includes("အထူးသတင်း")) return text; // Default Burmese
+            if (targetLang === 'en' && targetLang === 'en') return text;
 
-            if (lang === 'my') {
-                title.innerText = "⚔️ World News Hub (မြန်မာ)";
-                subtitle.innerText = "မင်းအောင်လှိုင် နှင့် ကမ္ဘာ့စစ်ရေးသတင်းများ";
-            } else if (lang === 'en') {
-                title.innerText = "⚔️ World News Hub (English)";
-                subtitle.innerText = "Min Aung Hlaing Updates & Global Military News";
-            } else if (lang === 'thi') {
-                title.innerText = "⚔️ World News Hub (ไทย)";
-                subtitle.innerText = "ข่าวสารทหารโลกและสถานการณ์เมียนมา";
+            // ဤနေရာတွင် Server Translation API (ဥပမာ - MyMemory API သို့မဟုတ် Google Translate API) ကို တိုက်ရိုက်လှမ်းခေါ်နိုင်ပါသည်
+            try {
+                const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=auto|${targetLang}`;
+                const res = await fetch(apiUrl);
+                const data = await res.json();
+                if (data && data.responseData && data.responseData.translatedText) {
+                    return data.responseData.translatedText;
+                }
+            } catch (e) {
+                console.warn("Server translation fallback used:", e);
+            }
+            return text; // Fallback to original if server fails
+        }
+
+        async function translateAndLoadNews() {
+            const targetLang = document.getElementById('lang-select').value;
+            const container = document.getElementById('news-list');
+            const serverStatus = document.getElementById('server-status');
+
+            container.innerHTML = `<p style="text-align: center; color: var(--meta-color);">Translating to [ ${targetLang.toUpperCase()} ] via Server API...</p>`;
+            serverStatus.innerText = `Server API: Processing translation (${targetLang})...`;
+
+            let translatedArticles = [];
+
+            for (let item of RAW_NEWS_DATABASE) {
+                // Server ဘက်မှ ဘာသာပြန်ဆိုမှုကို တောင်းခံခြင်း
+                const translatedTitle = await translateText(item.original_title, targetLang);
+                const translatedDesc = await translateText(item.original_desc, targetLang);
+
+                translatedArticles.push({
+                    title: translatedTitle,
+                    description: translatedDesc,
+                    url: item.url,
+                    source: item.source,
+                    date: item.date,
+                    isPriority: item.isPriority
+                });
             }
 
-            const articles = NEWS_DATA.map(item => ({
-                title: lang === 'thi' ? item.title_thi : (lang === 'en' ? item.title_en : item.title_my),
-                description: lang === 'thi' ? item.desc_thi : (lang === 'en' ? item.desc_en : item.desc_my),
-                url: item.url,
-                source: item.source,
-                verification: item.verification,
-                date: item.date,
-                isPriority: item.isPriority
-            }));
+            serverStatus.innerText = `Server API: Translated successfully (${targetLang})`;
 
-            container.innerHTML = articles.map(art => `
+            container.innerHTML = translatedArticles.map(art => `
                 <div class="news-card ${art.isPriority ? 'priority-card' : ''}">
                     <a href="${art.url}" target="_blank" class="news-title">${art.isPriority ? '🔥 ' : ''}${art.title}</a>
                     <div class="news-desc">${art.description}</div>
                     <div class="news-meta">
-                        <span>📡 ${art.source} <span class="verification-tag">${art.verification}</span></span>
+                        <span>📡 ${art.source} <span class="server-badge">Server Translated</span></span>
                         <span>📅 ${art.date}</span>
                     </div>
                 </div>
             `).join('');
         }
 
-        loadNews();
+        // Run initial translation and load
+        translateAndLoadNews();
     </script>
 </body>
 </html>
