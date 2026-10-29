@@ -5,316 +5,147 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>World News Hub</title>
     <style>
-        :root {
-            --primary-color: #1a73e8;
-            --bg-color: #f8f9fa;
-            --card-bg: #ffffff;
-            --text-color: #202124;
-            --secondary-text: #5f6368;
-            --border-color: #dadce0;
-        }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
             margin: 0;
-            padding: 0;
-        }
-        header {
-            background-color: var(--card-bg);
-            padding: 15px 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .header-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
+            padding: 15px;
         }
         h1 {
-            margin: 0;
-            font-size: 22px;
-            color: var(--primary-color);
+            color: #ffffff;
+            font-size: 24px;
+            margin-bottom: 15px;
         }
         .controls {
             display: flex;
+            flex-direction: column;
             gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
+            margin-bottom: 20px;
         }
         select, input, button {
-            padding: 8px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 14px;
-            outline: none;
-        }
-        input {
-            flex: 1;
-            min-width: 200px;
+            padding: 10px;
+            background-color: #1e1e1e;
+            color: #ffffff;
+            border: 1px solid #333;
+            border-radius: 5px;
+            font-size: 16px;
         }
         button {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
+            background-color: #0066cc;
             cursor: pointer;
-            transition: background 0.2s;
+            border: none;
         }
         button:hover {
-            background-color: #1557b0;
-        }
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 0 15px;
+            background-color: #0055b3;
         }
         .news-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 16px;
+            background-color: #1e1e1e;
+            padding: 15px;
             margin-bottom: 15px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-            transition: transform 0.2s;
-        }
-        .news-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.08);
-        }
-        .news-source {
-            font-size: 11px;
-            font-weight: bold;
-            color: var(--primary-color);
-            text-transform: uppercase;
-            margin-bottom: 5px;
-            display: inline-block;
-            background: #e8f0fe;
-            padding: 2px 6px;
-            border-radius: 4px;
+            border-radius: 8px;
+            border: 1px solid #333;
         }
         .news-title {
             font-size: 18px;
-            font-weight: 600;
-            margin: 8px 0;
-            color: var(--text-color);
+            font-weight: bold;
+            color: #4dabf7;
             text-decoration: none;
             display: block;
-        }
-        .news-title:hover {
-            color: var(--primary-color);
-            text-decoration: underline;
+            margin-bottom: 8px;
         }
         .news-desc {
             font-size: 14px;
-            color: var(--secondary-text);
+            color: #b0b0b0;
             margin-bottom: 10px;
-            line-height: 1.5;
         }
-        .news-footer {
-            display: flex;
-            justify-content: space-between;
+        .news-source {
             font-size: 12px;
-            color: var(--secondary-text);
-            border-top: 1px solid #f1f3f4;
-            padding-top: 8px;
+            color: #888;
         }
-        .loading, .error-msg, .empty-msg {
+        .loading, .error-msg {
             text-align: center;
-            padding: 40px;
-            color: var(--secondary-text);
-            font-size: 16px;
+            padding: 20px;
+            color: #888;
         }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="header-top">
-            <h1 id="app-title">World News Hub</h1>
-            <div class="controls">
-                <select id="lang-select" onchange="changeLanguage()">
-                    <option value="my">မြန်မာ</option>
-                    <option value="en">English</option>
-                    <option value="th">ภาษาไทย</option>
-                </select>
-                <button onclick="fetchNews()">🔄 Refresh</button>
-            </div>
-        </div>
-        <div class="controls" style="margin-top: 12px;">
-            <input type="text" id="search-input" placeholder="Search news..." oninput="filterNews()">
-            <select id="source-filter" onchange="filterNews()">
-                <option value="ALL">All Sources</option>
-                <option value="BBC_BURMESE">BBC Burmese</option>
-                <option value="VOA_BURMESE">VOA Burmese</option>
-                <option value="RFA_BURMESE">RFA Burmese</option>
-                <option value="BBC">BBC</option>
-                <option value="ALJAZEERA">Al Jazeera</option>
-                <option value="DW">DW</option>
-                <option value="THAIPBS">Thai PBS</option>
-            </select>
-        </div>
-    </header>
-
-    <div class="container" id="news-container">
-        <div class="loading" id="loading-text">Loading latest news...</div>
+    <h1>World News Hub</h1>
+    
+    <div class="controls">
+        <select id="lang-select" onchange="fetchNews()">
+            <option value="my">မြန်မာ</option>
+            <option value="en">English</option>
+        </select>
+        
+        <button onclick="fetchNews()">🔄 Refresh</button>
+        
+        <input type="text" id="search-box" placeholder="Search news..." onkeyup="filterNews()">
+        
+        <select id="source-select" onchange="filterNews()">
+            <option value="all">All Sources</option>
+            <option value="GitHub Pages">GitHub Pages</option>
+            <option value="Mizzima">Mizzima</option>
+        </select>
     </div>
+
+    <div id="news-container"></div>
 
     <script>
         let allArticles = [];
 
-        const uiTexts = {
-            en: {
-                title: "World News Hub",
-                searchPlaceholder: "Search news...",
-                allSources: "All Sources",
-                loading: "Loading latest news...",
-                error: "Failed to load news. Please check your connection or server.",
-                empty: "No news found."
-            },
-            my: {
-                title: "ကမ္ဘာ့သတင်းစင်တာ (World News Hub)",
-                searchPlaceholder: "သတင်းများကို ရှာရန်...",
-                allSources: "သတင်းရင်းမြစ် အားလုံး",
-                loading: "သတင်းများကို ရယူနေပါပြီ...",
-                error: "သတင်းရယူ၍ မရပါ။ ဆက်သွယ်မှုကို စစ်ဆေးပါ။",
-                empty: "သတင်း မတွေ့ရှိပါ။"
-            },
-            th: {
-                title: "ศูนย์รวมข่าวสารโลก (World News Hub)",
-                searchPlaceholder: "ค้นหาข่าว...",
-                allSources: "ทุกแหล่งข่าว",
-                loading: "กำลังโหลดข่าวล่าสุด...",
-                error: "ไม่สามารถโหลดข่าวได้ โปรดตรวจสอบการเชื่อมต่อ",
-                empty: "ไม่พบข่าว"
-            }
-        };
-
-        function changeLanguage() {
-            const lang = document.getElementById('lang-select').value;
-            document.getElementById('app-title').innerText = uiTexts[lang].title;
-            document.getElementById('search-input').placeholder = uiTexts[lang].searchPlaceholder;
-            
-            const sourceFilter = document.getElementById('source-filter');
-            sourceFilter.options[0].text = uiTexts[lang].allSources;
-            
-            const loadingEl = document.getElementById('loading-text');
-            if (loadingEl) {
-                loadingEl.innerText = uiTexts[lang].loading;
-            }
-        }
-
         async function fetchNews() {
             const container = document.getElementById('news-container');
-            const lang = document.getElementById('lang-select').value;
-            container.innerHTML = `<div class="loading">${uiTexts[lang].loading || 'Loading...'}</div>`;
+            container.innerHTML = '<div class="loading">Loading news...</div>';
 
-            try {
-                // Free Public News API သို့မဟုတ် အလွယ်တကူ စမ်းရန် Sample Data သုံးခြင်း
-                const apiKey = 'YOUR_NEWS_API_KEY'; // လိုပါက API Key ထည့်ရန် (သို့မဟုတ် အောက်ပါ Sample ဖြင့် စမ်းရန်)
-             async function fetchNews() {
-            const container = document.getElementById('news-container');
-            const lang = document.getElementById('lang-select').value;
-            container.innerHTML = `<div class="loading">${uiTexts[lang].loading || 'Loading...'}</div>`;
-
-            try {
-                // Free Public News API သို့မဟုတ် အလွယ်တကူ စမ်းရန် Sample Data သုံးခြင်း
-                const apiKey = 'YOUR_NEWS_API_KEY'; // လိုပါက API Key ထည့်ရန် (သို့မဟုတ် အောက်ပါ Sample ဖြင့် စမ်းရန်)
-                
-                // ဤနေရာတွင် API အစား Sample Data ဖြင့် အရင်ပြသရန် displaySampleNews() ကို သုံးပါမည်
-                displaySampleNews();
-            } catch (error) {
-                console.error('Error fetching news:', error);
-                container.innerHTML = `<div class="error-msg">${uiTexts[lang].error || 'Error loading news'}</div>`;
-            }
-        }
-
-        function displaySampleNews() {
-            const container = document.getElementById('news-container');
-            const sampleArticles = [
+            // Sample / Static News Data
+            allArticles = [
                 {
-                    title: "World News Hub Launched on GitHub Pages",
-                    description: "Your international news hub is now successfully deployed and running statically on GitHub Pages.",
-                    url: "#",
-                    urlToImage: "https://via.placeholder.com/300",
+                    title: "World News Hub Successfully Launched on GitHub Pages",
+                    description: "Your international news portal is now live and running statically without requiring a Python backend server.",
+                    url: "https://github.com/Equality001/world-news-hub",
                     publishedAt: new Date().toISOString(),
                     source: { name: "GitHub Pages" }
-                }
-            ];
-            displayNews(sampleArticles);
-        }
-          
-                // ဤနေရာတွင် API အစား Sample Data ဖြင့် အရင်ပြသရန် displaySampleNews() ကို သုံးပါမည်
-                displaySampleNews();
-            } catch (error) {
-                console.error('Error fetching news:', error);
-                container.innerHTML = `<div class="error-msg">${uiTexts[lang].error || 'Error loading news'}</div>`;
-            }
-        }
-
-        function displaySampleNews() {
-            const container = document.getElementById('news-container');
-            const sampleArticles = [
+                },
                 {
-                    title: "World News Hub Launched on GitHub Pages",
-                    description: "Your international news hub is now successfully deployed and running statically on GitHub Pages.",
-                    url: "#",
-                    urlToImage: "https://via.placeholder.com/300",
+                    title: "Mizzima News & Global Updates",
+                    description: "Stay updated with local and international news headlines directly from your custom mobile web portal.",
+                    url: "https://www.mizzima.com",
                     publishedAt: new Date().toISOString(),
-                    source: { name: "GitHub Pages" }
+                    source: { name: "Mizzima" }
                 }
             ];
-            displayNews(sampleArticles);
-        }
-async function fetchNews() {
-            const container = document.getElementById('news-container');
-            const lang = document.getElementById('lang-select').value;
-            container.innerHTML = `<div class="loading">${uiTexts[lang].loading}</div>`;
-
-            try {
-                const response = await fetch('/api/news');
-                if (!response.ok) throw new Error('Network response was not ok');
-                allArticles = await response.json();
-                displayNews(allArticles);
-            } catch (error) {
-                console.error('Error fetching news:', error);
-                container.innerHTML = `<div class="error-msg">${uiTexts[lang].error}</div>`;
-            }
+            
+            displayNews(allArticles);
         }
 
         function displayNews(articles) {
             const container = document.getElementById('news-container');
-            const lang = document.getElementById('lang-select').value;
-            
-            if (!articles || articles.length === 0) {
-                container.innerHTML = `<div class="empty-msg">${uiTexts[lang].empty}</div>`;
+            ifinya = articles.length === 0;
+            if (articles.length === 0) {
+                container.innerHTML = '<div class="error-msg">သတင်းရှာမတွေ့ပါ။ (No news found)</div>';
                 return;
             }
 
             container.innerHTML = articles.map(article => `
                 <div class="news-card">
-                    <span class="news-source">${article.source}</span>
-                    <a href="${article.link}" target="_blank" class="news-title">${article.title}</a>
-                    <div class="news-desc">${article.description}</div>
-                    <div class="news-footer">
-                        <span>📅 ${article.published || 'Recent'}</span>
-                        <a href="${article.link}" target="_blank" style="color: var(--primary-color); text-decoration: none; font-weight: 500;">Read Original &rarr;</a>
-                    </div>
+                    <a href="${article.url}" target="_blank" class="news-title">${article.title}</a>
+                    <div class="news-desc">${article.description || ''}</div>
+                    <div class="news-source">Source: ${article.source.name}</div>
                 </div>
             `).join('');
         }
 
         function filterNews() {
-            const searchQuery = document.getElementById('search-input').value.toLowerCase();
-            const selectedSource = document.getElementById('source-filter').value;
+            const searchQuery = document.getElementById('search-box').value.toLowerCase();
+            const selectedSource = document.getElementById('source-select').value;
 
             const filtered = allArticles.filter(article => {
                 const matchesSearch = article.title.toLowerCase().includes(searchQuery) || 
-                                      article.description.toLowerCase().includes(searchQuery);
-                const matchesSource = (selectedSource === 'ALL' || article.source === selectedSource);
+                                      (article.description && article.description.toLowerCase().includes(searchQuery));
+                const matchesSource = selectedSource === 'all' || article.source.name === selectedSource;
                 return matchesSearch && matchesSource;
             });
 
