@@ -3,168 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>World News Hub - Live News</title>
+    <title>World News Hub - Mizzima News</title>
     <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --text-color: #c9d1d9;
+            --accent-color: #58a6ff;
+            --border-color: #30363d;
+        }
         body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
             margin: 0;
-            padding: 15px;
+            padding: 20px;
         }
-        h1 {
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .header h1 {
             color: #ffffff;
-            font-size: 24px;
-            margin-bottom: 15px;
+            font-size: 26px;
+            margin-bottom: 5px;
         }
-        .controls {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 20px;
+        .header p {
+            color: #8b949e;
+            font-size: 14px;
         }
-        select, input, button {
-            padding: 10px;
-            background-color: #1e1e1e;
-            color: #ffffff;
-            border: 1px solid #333;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        button {
-            background-color: #0066cc;
-            cursor: pointer;
-            border: none;
-        }
-        button:hover {
-            background-color: #0055b3;
+        .news-container {
+            max-width: 600px;
+            margin: 0 auto;
         }
         .news-card {
-            background-color: #1e1e1e;
-            padding: 15px;
-            margin-bottom: 15px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
-            border: 1px solid #333;
+            padding: 16px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
         .news-title {
             font-size: 18px;
             font-weight: bold;
-            color: #4dabf7;
+            color: var(--accent-color);
             text-decoration: none;
             display: block;
             margin-bottom: 8px;
         }
+        .news-title:hover {
+            text-decoration: underline;
+        }
         .news-desc {
             font-size: 14px;
-            color: #b0b0b0;
-            margin-bottom: 10px;
+            color: #8b949e;
+            margin-bottom: 12px;
+            line-height: 1.4;
         }
-        .news-source {
+        .news-meta {
             font-size: 12px;
-            color: #888;
+            color: #6e7681;
+            display: flex;
+            justify-content: space-between;
         }
-        .loading, .error-msg {
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            max-width: 400px;
+            margin: 0 auto 20px auto;
+        }
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            background-color: #238636;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+            font-weight: bold;
             text-align: center;
-            padding: 20px;
-            color: #888;
+        }
+        .action-btn:hover {
+            background-color: #2ea043;
         }
     </style>
 </head>
 <body>
 
-    <h1>World News Hub</h1>
-    
-    <div class="controls">
-        <select id="lang-select" onchange="fetchNews()">
-            <option value="my">မြန်မာ</option>
-            <option value="en">English</option>
-        </select>
-        
-        <button onclick="fetchNews()">🔄 Refresh News</button>
-        
-        <input type="text" id="search-box" placeholder="Search news..." onkeyup="filterNews()">
-        
-        <select id="source-select" onchange="filterNews()">
-            <option value="all">All Sources</option>
-            <option value="Mizzima">Mizzima (Custom)</option>
-            <option value="Global News">Global News</option>
-        </select>
+    <div class="header">
+        <h1>🇲🇲 Mizzima News Hub</h1>
+        <p>Latest updates from Mizzima Media</p>
     </div>
 
-    <div id="news-container"></div>
+    <div class="btn-group">
+        <button class="action-btn" onclick="loadMizzimaNews()">🔄 Load Mizzima</button>
+        <a href="https://www.mizzima.com" target="_blank" class="action-btn" style="text-decoration: none; background-color: #1f6feb;">🌐 Visit Mizzima</a>
+    </div>
+
+    <div class="news-container" id="news-list">
+        <p style="text-align: center; color: #8b949e;">Loading Mizzima news...</p>
+    </div>
 
     <script>
-        let allArticles = [];
-
-        async function fetchNews() {
-            const container = document.getElementById('news-container');
-            container.innerHTML = '<div class="loading">Loading live news...</div>';
+        async function loadMizzimaNews() {
+            const container = document.getElementById('news-list');
+            container.innerHTML = '<p style="text-align: center; color: #8b949e;">Fetching Mizzima headlines...</p>';
 
             try {
-                // Fetching free public news API for real-time headlines
-                const response = await fetch('https://api.spaceflightnewsapi.net/v4/articles/?limit=10');
-                const data = await response.json();
+                // Using RSS2JSON proxy to safely fetch Mizzima RSS feed without CORS errors
+                const rssUrl = 'https://www.mizzima.com/feed';
+                const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
                 
-                // Map API data to standard format
-                const apiArticles = data.results.map(item => ({
-                    title: item.title,
-                    description: item.summary,
-                    url: item.url,
-                    publishedAt: item.published_at,
-                    sourceName: "Global News"
-                }));
+                const res = await fetch(apiUrl);
+                const data = await res.json();
 
-                // Custom / Mizzima sample updates placeholder (Can be updated manually or via RSS proxy)
-                const mizzimaArticles = [
-                    {
-                        title: "Mizzima: Latest Updates & International Headlines",
-                        description: "Explore ongoing regional and international news coverages updated for Burmese readers.",
-                        url: "https://www.mizzima.com",
-                        publishedAt: new Date().toISOString(),
-                        sourceName: "Mizzima"
-                    }
-                ];
+                if (data.status === 'ok' && data.items.length > 0) {
+                    const articles = data.items.map(item => ({
+                        title: item.title,
+                        description: item.description.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...', // Strip HTML tags for cleaner summary
+                        url: item.link,
+                        date: new Date(item.pubDate).toLocaleDateString()
+                    }));
 
-                allArticles = [...mizzimaArticles, ...apiArticles];
-                displayNews(allArticles);
+                    container.innerHTML = articles.map(art => `
+                        <div class="news-card">
+                            <a href="${art.url}" target="_blank" class="news-title">${art.title}</a>
+                            <div class="news-desc">${art.description}</div>
+                            <div class="news-meta">
+                               <span>📡 Mizzima News</span>
+                               <span>📅 ${art.date}</span>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    throw new Error('No items found');
+                }
 
-            } catch (error) {
-                container.innerHTML = '<div class="error-msg">သတင်းများ ဆွဲထုတ်ရာတွင် အမှားအယွင်းရှိท (Failed to load live news)</div>';
+            } catch (err) {
+                // Fallback display if RSS proxy fails or blocks
+                container.innerHTML = `
+                    <div class="news-card">
+                        <a href="https://www.mizzima.com" target="_blank" class="news-title">မဇ္ဈိမ သတင်းဌာန (တရားဝင်ဝဘ်ဆိုက်သို့ သွားရန်)</a>
+                        <div class="news-desc">လက်ရှိတွင် Mizzima RSS feed ကို တိုက်ရိုက်ဆွဲထုတ်ရာ၌ ကန့်သတ်ချက်ရှိနေပါသဖြင့် အောက်ပါလင့်ခ်မှတစ်ဆင့် တိုက်ရိုက်ဖတ်ရှုနိုင်ပါသည်။</div>
+                        <div class="news-meta">
+                            <span>📡 Mizzima Official</span>
+                            <span>⚡ Live Link</span>
+                        </div>
+                    </div>
+                `;
             }
         }
 
-        function displayNews(articles) {
-            const container = document.getElementById('news-container');
-            if (articles.length === 0) {
-                container.innerHTML = '<div class="error-msg">သတင်းရှာမတွေ့ပါ။ (No news found)</div>';
-                return;
-            }
-
-            container.innerHTML = articles.map(article => `
-                <div class="news-card">
-                    <a href="${article.url}" target="_blank" class="news-title">${article.title}</a>
-                    <div class="news-desc">${article.description || ''}</div>
-                    <div class="news-source">Source: ${article.sourceName}</div>
-                </div>
-            `).join('');
-        }
-
-        function filterNews() {
-            const searchQuery = document.getElementById('search-box').value.toLowerCase();
-            const selectedSource = document.getElementById('source-select').value;
-
-            const filtered = allArticles.filter(article => {
-                const matchesSearch = article.title.toLowerCase().includes(searchQuery) || 
-                                      (article.description && article.description.toLowerCase().includes(searchQuery));
-                const matchesSource = selectedSource === 'all' || article.sourceName === selectedSource;
-                return matchesSearch && matchesSource;
-            });
-
-            displayNews(filtered);
-        }
-
-        // Initial load
-        fetchNews();
+        // Run on load
+        loadMizzimaNews();
     </script>
 </body>
 </html>
