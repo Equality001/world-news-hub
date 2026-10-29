@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>World News Hub - Mizzima News</title>
+    <title>World & Myanmar News Hub</title>
     <style>
         :root {
             --bg-color: #0d1117;
@@ -11,6 +11,8 @@
             --text-color: #c9d1d9;
             --accent-color: #58a6ff;
             --border-color: #30363d;
+            --priority-bg: #1f242c;
+            --priority-border: #f85149;
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -21,19 +23,42 @@
         }
         .header {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
         .header h1 {
             color: #ffffff;
-            font-size: 26px;
+            font-size: 24px;
             margin-bottom: 5px;
         }
         .header p {
             color: #8b949e;
             font-size: 14px;
         }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            max-width: 500px;
+            margin: 0 auto 20px auto;
+        }
+        select, .btn {
+            padding: 10px;
+            background-color: #21262d;
+            color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .btn {
+            background-color: #238636;
+            font-weight: bold;
+        }
+        .btn:hover {
+            background-color: #2ea043;
+        }
         .news-container {
-            max-width: 600px;
+            max-width: 650px;
             margin: 0 auto;
         }
         .news-card {
@@ -44,13 +69,22 @@
             margin-bottom: 15px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
+        /* Highlight style for Min Aung Hlaing priority news */
+        .priority-card {
+            background-color: var(--priority-bg);
+            border: 2px solid var(--priority-border);
+        }
         .news-title {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: bold;
             color: var(--accent-color);
             text-decoration: none;
             display: block;
             margin-bottom: 8px;
+            line-height: 1.4;
+        }
+        .priority-card .news-title {
+            color: #ff7b72;
         }
         .news-title:hover {
             text-decoration: underline;
@@ -59,7 +93,7 @@
             font-size: 14px;
             color: #8b949e;
             margin-bottom: 12px;
-            line-height: 1.4;
+            line-height: 1.5;
         }
         .news-meta {
             font-size: 12px;
@@ -67,97 +101,107 @@
             display: flex;
             justify-content: space-between;
         }
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            max-width: 400px;
-            margin: 0 auto 20px auto;
-        }
-        .action-btn {
-            flex: 1;
-            padding: 10px;
-            background-color: #238636;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 15px;
-            cursor: pointer;
-            font-weight: bold;
-            text-align: center;
-        }
-        .action-btn:hover {
-            background-color: #2ea043;
-        }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>🇲🇲 Mizzima News Hub</h1>
-        <p>Latest updates from Mizzima Media</p>
+        <h1 id="site-title">🌐 World & News Hub</h1>
+        <p id="site-subtitle">Latest Updates & Top Priorities</p>
     </div>
 
-    <div class="btn-group">
-        <button class="action-btn" onclick="loadMizzimaNews()">🔄 Load Mizzima</button>
-        <a href="https://www.mizzima.com" target="_blank" class="action-btn" style="text-decoration: none; background-color: #1f6feb;">🌐 Visit Mizzima</a>
+    <div class="controls">
+        <select id="lang-select" onchange="loadNews()">
+            <option value="my">🇲🇲 မြန်မာ (Myanmar)</option>
+            <option value="en">🇬🇧 English</option>
+            <option value="thi">🇹🇭 ไทย (Thai)</option>
+        </select>
+        <button class="btn" onclick="loadNews()">🔄 Refresh</button>
     </div>
 
     <div class="news-container" id="news-list">
-        <p style="text-align: center; color: #8b949e;">Loading Mizzima news...</p>
+        <p style="text-align: center; color: #8b949e;">Loading...</p>
     </div>
 
     <script>
-        async function loadMizzimaNews() {
+        async function loadNews() {
+            const lang = document.getElementById('lang-select').value;
             const container = document.getElementById('news-list');
-            container.innerHTML = '<p style="text-align: center; color: #8b949e;">Fetching Mizzima headlines...</p>';
+            const title = document.getElementById('site-title');
+            const subtitle = document.getElementById('site-subtitle');
+
+            container.innerHTML = '<p style="text-align: center; color: #8b949e;">Loading headlines...</p>';
+
+            // Translations for UI headers
+            if (lang === 'my') {
+                title.innerText = "🌐 ကမ္ဘာ့သတင်းနှင့် မဇ္ဈိမ Hub";
+                subtitle.innerText = "မင်းအောင်လှိုင် နှင့် နောက်ဆုံးရ သတင်းများ";
+            } else if (lang === 'en') {
+                title.innerText = "🌐 World News Hub";
+                subtitle.innerText = "Min Aung Hlaing Updates & Global Headlines";
+            } else if (lang === 'thi') {
+                title.innerText = "🌐 ศูนย์รวมข่าวสารโลก";
+                subtitle.innerText = "ข่าวสารล่าสุดและสถานการณ์เมียนมา";
+            }
 
             try {
-                // Using RSS2JSON proxy to safely fetch Mizzima RSS feed without CORS errors
+                // 1. Priority News (Min Aung Hlaing / Myanmar Politics custom items)
+                let priorityArticles = [
+                    {
+                        title: lang === 'thi' ? "รายงานสถานการณ์: พลเอกอาวุโส มิน อ่อง หล่าย และการเคลื่อนไหวทางการเมือง" : (lang === 'en' ? "Update: Senior General Min Aung Hlaing and Political Developments" : "အထူးသတင်း: နိုင်ငံတော်စီမံအုပ်ချုပ်ရေးနှင့် မင်းအောင်လှိုင်၏ နောက်ဆုံးဆောင်ရွက်ချက်များ"),
+                        description: lang === 'thi' ? "ติดตามข่าวสารความเคลื่อนไหวล่าสุดเกี่ยวกับสถานการณ์ทางการเมืองและการบริหารประเทศในเมียนมา" : (lang === 'en' ? "Tracking key political updates, regional relations, and administrative announcements." : "နိုင်ငံရေးအပြောင်းအလဲများ၊ အစိုးရအဖွဲ့၏ လုပ်ဆောင်ချက်များနှင့် ဒေသတွင်းသတင်းများ."),
+                        url: "https://www.mizzima.com",
+                        source: "Priority / Mizzima",
+                        date: new Date().toLocaleDateString(),
+                        isPriority: true
+                    }
+                ];
+
+                // 2. Fetching RSS / Live Feed
                 const rssUrl = 'https://www.mizzima.com/feed';
                 const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
                 
                 const res = await fetch(apiUrl);
                 const data = await res.json();
 
+                let feedArticles = [];
                 if (data.status === 'ok' && data.items.length > 0) {
-                    const articles = data.items.map(item => ({
+                    feedArticles = data.items.map(item => ({
                         title: item.title,
-                        description: item.description.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...', // Strip HTML tags for cleaner summary
+                        description: item.description.replace(/<[^>]*>?/gm, '').substring(0, 150) + '...',
                         url: item.link,
-                        date: new Date(item.pubDate).toLocaleDateString()
+                        source: "Mizzima Media",
+                        date: new Date(item.pubDate).toLocaleDateString(),
+                        isPriority: false
                     }));
-
-                    container.innerHTML = articles.map(art => `
-                        <div class="news-card">
-                            <a href="${art.url}" target="_blank" class="news-title">${art.title}</a>
-                            <div class="news-desc">${art.description}</div>
-                            <div class="news-meta">
-                               <span>📡 Mizzima News</span>
-                               <span>📅 ${art.date}</span>
-                            </div>
-                        </div>
-                    `).join('');
-                } else {
-                    throw new Error('No items found');
                 }
 
-            } catch (err) {
-                // Fallback display if RSS proxy fails or blocks
-                container.innerHTML = `
-                    <div class="news-card">
-                        <a href="https://www.mizzima.com" target="_blank" class="news-title">မဇ္ဈိမ သတင်းဌာန (တရားဝင်ဝဘ်ဆိုက်သို့ သွားရန်)</a>
-                        <div class="news-desc">လက်ရှိတွင် Mizzima RSS feed ကို တိုက်ရိုက်ဆွဲထုတ်ရာ၌ ကန့်သတ်ချက်ရှိနေပါသဖြင့် အောက်ပါလင့်ခ်မှတစ်ဆင့် တိုက်ရိုက်ဖတ်ရှုနိုင်ပါသည်။</div>
+                // Combine: Priority first, followed by feed news
+                const allArticles = [...priorityArticles, ...feedArticles];
+
+                container.innerHTML = allArticles.map(art => `
+                    <div class="news-card ${art.isPriority ? 'priority-card' : ''}">
+                        <a href="${art.url}" target="_blank" class="news-title">${art.isPriority ? '🔥 ' : ''}${art.title}</a>
+                        <div class="news-desc">${art.description}</div>
                         <div class="news-meta">
-                            <span>📡 Mizzima Official</span>
-                            <span>⚡ Live Link</span>
+                            <span>📡 ${art.source}</span>
+                            <span>📅 ${art.date}</span>
                         </div>
+                    </div>
+                `).join('');
+
+            } catch (err) {
+                container.innerHTML = `
+                    <div class="news-card priority-card">
+                        <a href="https://www.mizzima.com" target="_blank" class="news-title">🔥 မဇ္ဈိမ သတင်းဌာန (တရားဝင် လင့်ခ်)</a>
+                        <div class="news-desc">သတင်းများကို ဆွဲထုတ်ရာတွင် ချိတ်ဆက်မှု အခက်အခဲရှိပါက အောက်ပါလင့်ခ်မှ တိုက်ရိုက်ဖတ်ရှုနိုင်ပါသည်။</div>
                     </div>
                 `;
             }
         }
 
-        // Run on load
-        loadMizzimaNews();
+        // Initial run
+        loadNews();
     </script>
 </body>
 </html>
