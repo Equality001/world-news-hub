@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>World News Hub — Server Translation Ready</title>
+    <title>Private World News Hub</title>
     <style>
         :root {
             --bg-color: #0d1117;
@@ -22,6 +22,58 @@
             margin: 0;
             padding: 15px;
         }
+        /* Password Screen Style */
+        #auth-screen {
+            max-width: 400px;
+            margin: 100px auto;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        #auth-screen h2 {
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+        #auth-screen p {
+            color: var(--meta-color);
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+        #auth-screen input {
+            width: 80%;
+            padding: 10px;
+            background-color: #21262d;
+            color: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            text-align: center;
+        }
+        .btn {
+            padding: 10px 20px;
+            background-color: #238636;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn:hover { background-color: #2ea043; }
+        .error-msg {
+            color: #f85149;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        /* Main Content Style (Hidden by default until login) */
+        #main-content {
+            display: none;
+        }
         .header {
             text-align: center;
             margin-bottom: 15px;
@@ -36,12 +88,6 @@
             font-size: 13px;
             margin: 0;
         }
-        .status-bar {
-            text-align: center;
-            font-size: 11px;
-            color: #7ee787;
-            margin-top: 5px;
-        }
         .controls {
             display: flex;
             flex-wrap: wrap;
@@ -50,7 +96,7 @@
             max-width: 600px;
             margin: 15px auto;
         }
-        select, .btn {
+        select, .action-btn {
             padding: 8px 12px;
             background-color: #21262d;
             color: #ffffff;
@@ -59,11 +105,6 @@
             font-size: 13px;
             cursor: pointer;
         }
-        .btn {
-            background-color: #238636;
-            font-weight: bold;
-        }
-        .btn:hover { background-color: #2ea043; }
         .news-container {
             max-width: 650px;
             margin: 0 auto;
@@ -113,27 +154,76 @@
 </head>
 <body>
 
-    <div class="header">
-        <h1 id="site-title">⚔️ World News Hub</h1>
-        <p id="site-subtitle">Server-Side Multi-Language Translation Engine</p>
-        <div class="status-bar" id="server-status">Server API: Connected & Ready</div>
+    <!-- 🔒 Password Login Screen -->
+    <div id="auth-screen">
+        <h2>🔒 Private Portal</h2>
+        <p>ဤဝဘ်ဆိုက်ကို ဝင်ရောက်ရန် စကားဝှက် ထည့်သွင်းပါ</p>
+        <input type="password" id="password-input" placeholder="Password ရိုက်ထည့်ပါ" onkeypress="checkEnter(event)">
+        <br>
+        <button class="btn" onclick="verifyPassword()">ဝင်မည် (Login)</button>
+        <div id="error-container" class="error-msg"></div>
     </div>
 
-    <div class="controls">
-        <select id="lang-select" onchange="translateAndLoadNews()">
-            <option value="my">🇲🇲 မြန်မာ (Myanmar)</option>
-            <option value="en">🇬🇧 English</option>
-            <option value="thi">🇹🇭 ไทย (Thai)</option>
-        </select>
-        <button class="btn" onclick="translateAndLoadNews()">🔄 Translate & Refresh</button>
-    </div>
+    <!-- 🌐 Main Portal Content -->
+    <div id="main-content">
+        <div class="header">
+            <h1 id="site-title">⚔️ Private World News Hub</h1>
+            <p id="site-subtitle">Server-Side Multi-Language Translation Engine</p>
+        </div>
 
-    <div class="news-container" id="news-list">
-        <p style="text-align: center; color: var(--meta-color);">Translating content via server...</p>
+        <div class="controls">
+            <select id="lang-select" onchange="translateAndLoadNews()">
+                <option value="my">🇲🇲 မြန်မာ (Myanmar)</option>
+                <option value="en">🇬🇧 English</option>
+                <option value="thi">🇹🇭 ไทย (Thai)</option>
+            </select>
+            <button class="action-btn" onclick="translateAndLoadNews()">🔄 Translate & Refresh</button>
+            <button class="action-btn" style="background-color: #da3633;" onclick="logout()">🚪 ထွက်မည်</button>
+        </div>
+
+        <div class="news-container" id="news-list">
+            <p style="text-align: center; color: var(--meta-color);">Translating content via server...</p>
+        </div>
     </div>
 
     <script>
-        // မူရင်း သတင်း အချက်အလက်များ (Server Database Mock)
+        // 🔑 ဤနေရာတွင် သူငယ်ချင်းကို ပေးမည့် Password ကို ပြောင်းလဲနိုင်ပါသည်
+        const CORRECT_PASSWORD = "secret123";
+
+        function verifyPassword() {
+            const inputVal = document.getElementById('password-input').value;
+            const errorEl = document.getElementById('error-container');
+
+            if (inputVal === CORRECT_PASSWORD) {
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+                localStorage.setItem('portal_auth', 'true');
+                translateAndLoadNews();
+            } else {
+                errorEl.innerText = "❌ စကားဝှက် မှားယွင်းနေပါသည်။ ထပ်ကြိုးစားပါ။";
+            }
+        }
+
+        function checkEnter(e) {
+            if (e.key === 'Enter') {
+                verifyPassword();
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('portal_auth');
+            location.reload();
+        }
+
+        // Auto login if session already authenticated
+        window.onload = function() {
+            if (localStorage.getItem('portal_auth') === 'true') {
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('main-content').style.display = 'block';
+                translateAndLoadNews();
+            }
+        };
+
         const RAW_NEWS_DATABASE = [
             {
                 id: "mah_001",
@@ -164,12 +254,10 @@
             }
         ];
 
-        // Server-side Translation Handler Simulation (Production မှာ Server API endpoint သို့မဟုတ် Cloudflare Worker သို့ ပို့ပေးရပါမည်)
         async function translateText(text, targetLang) {
-            if (targetLang === 'my' && text.includes("အထူးသတင်း")) return text; // Default Burmese
+            if (targetLang === 'my' && text.includes("အထူးသတင်း")) return text;
             if (targetLang === 'en' && targetLang === 'en') return text;
 
-            // ဤနေရာတွင် Server Translation API (ဥပမာ - MyMemory API သို့မဟုတ် Google Translate API) ကို တိုက်ရိုက်လှမ်းခေါ်နိုင်ပါသည်
             try {
                 const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=auto|${targetLang}`;
                 const res = await fetch(apiUrl);
@@ -180,21 +268,18 @@
             } catch (e) {
                 console.warn("Server translation fallback used:", e);
             }
-            return text; // Fallback to original if server fails
+            return text;
         }
 
         async function translateAndLoadNews() {
             const targetLang = document.getElementById('lang-select').value;
             const container = document.getElementById('news-list');
-            const serverStatus = document.getElementById('server-status');
 
             container.innerHTML = `<p style="text-align: center; color: var(--meta-color);">Translating to [ ${targetLang.toUpperCase()} ] via Server API...</p>`;
-            serverStatus.innerText = `Server API: Processing translation (${targetLang})...`;
 
             let translatedArticles = [];
 
             for (let item of RAW_NEWS_DATABASE) {
-                // Server ဘက်မှ ဘာသာပြန်ဆိုမှုကို တောင်းခံခြင်း
                 const translatedTitle = await translateText(item.original_title, targetLang);
                 const translatedDesc = await translateText(item.original_desc, targetLang);
 
@@ -208,8 +293,6 @@
                 });
             }
 
-            serverStatus.innerText = `Server API: Translated successfully (${targetLang})`;
-
             container.innerHTML = translatedArticles.map(art => `
                 <div class="news-card ${art.isPriority ? 'priority-card' : ''}">
                     <a href="${art.url}" target="_blank" class="news-title">${art.isPriority ? '🔥 ' : ''}${art.title}</a>
@@ -221,9 +304,6 @@
                 </div>
             `).join('');
         }
-
-        // Run initial translation and load
-        translateAndLoadNews();
     </script>
 </body>
 </html>
