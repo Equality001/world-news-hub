@@ -210,6 +210,68 @@
         async function fetchNews() {
             const container = document.getElementById('news-container');
             const lang = document.getElementById('lang-select').value;
+            container.innerHTML = `<div class="loading">${uiTexts[lang].loading || 'Loading...'}</div>`;
+
+            try {
+                // Free Public News API သို့မဟုတ် အလွယ်တကူ စမ်းရန် Sample Data သုံးခြင်း
+                const apiKey = 'YOUR_NEWS_API_KEY'; // လိုပါက API Key ထည့်ရန် (သို့မဟုတ် အောက်ပါ Sample ဖြင့် စမ်းရန်)
+             async function fetchNews() {
+            const container = document.getElementById('news-container');
+            const lang = document.getElementById('lang-select').value;
+            container.innerHTML = `<div class="loading">${uiTexts[lang].loading || 'Loading...'}</div>`;
+
+            try {
+                // Free Public News API သို့မဟုတ် အလွယ်တကူ စမ်းရန် Sample Data သုံးခြင်း
+                const apiKey = 'YOUR_NEWS_API_KEY'; // လိုပါက API Key ထည့်ရန် (သို့မဟုတ် အောက်ပါ Sample ဖြင့် စမ်းရန်)
+                
+                // ဤနေရာတွင် API အစား Sample Data ဖြင့် အရင်ပြသရန် displaySampleNews() ကို သုံးပါမည်
+                displaySampleNews();
+            } catch (error) {
+                console.error('Error fetching news:', error);
+                container.innerHTML = `<div class="error-msg">${uiTexts[lang].error || 'Error loading news'}</div>`;
+            }
+        }
+
+        function displaySampleNews() {
+            const container = document.getElementById('news-container');
+            const sampleArticles = [
+                {
+                    title: "World News Hub Launched on GitHub Pages",
+                    description: "Your international news hub is now successfully deployed and running statically on GitHub Pages.",
+                    url: "#",
+                    urlToImage: "https://via.placeholder.com/300",
+                    publishedAt: new Date().toISOString(),
+                    source: { name: "GitHub Pages" }
+                }
+            ];
+            displayNews(sampleArticles);
+        }
+          
+                // ဤနေရာတွင် API အစား Sample Data ဖြင့် အရင်ပြသရန် displaySampleNews() ကို သုံးပါမည်
+                displaySampleNews();
+            } catch (error) {
+                console.error('Error fetching news:', error);
+                container.innerHTML = `<div class="error-msg">${uiTexts[lang].error || 'Error loading news'}</div>`;
+            }
+        }
+
+        function displaySampleNews() {
+            const container = document.getElementById('news-container');
+            const sampleArticles = [
+                {
+                    title: "World News Hub Launched on GitHub Pages",
+                    description: "Your international news hub is now successfully deployed and running statically on GitHub Pages.",
+                    url: "#",
+                    urlToImage: "https://via.placeholder.com/300",
+                    publishedAt: new Date().toISOString(),
+                    source: { name: "GitHub Pages" }
+                }
+            ];
+            displayNews(sampleArticles);
+        }
+async function fetchNews() {
+            const container = document.getElementById('news-container');
+            const lang = document.getElementById('lang-select').value;
             container.innerHTML = `<div class="loading">${uiTexts[lang].loading}</div>`;
 
             try {
