@@ -24,9 +24,8 @@ public class MainActivity extends Activity {
 
         webView.setWebViewClient(new WebViewClient());
         
-        // Note: For local testing / initial build, we can point to a public server URL or local backend when deployed online.
-        // For local server in Termux, users typically use a public URL or hosted backend so the friend's phone can access it.
-        webView.loadUrl("https://example.com"); // We will update this with your actual online backend/frontend URL soon!
+        // Connected to your online World News Hub hosted on GitHub Pages
+        webView.loadUrl("https://equality001.github.io/world-news-hub/");
     }
 
     @Override
